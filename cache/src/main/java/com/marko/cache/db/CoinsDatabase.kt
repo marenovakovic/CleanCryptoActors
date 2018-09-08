@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.marko.cache.entity.CoinCache
 
 @Database(entities = [CoinCache::class], version = 1)
-abstract class CoinsDatabase: RoomDatabase() {
+abstract class CoinsDatabase : RoomDatabase() {
 
 	abstract fun coinsDao(): CoinsDao
 
@@ -17,11 +17,11 @@ abstract class CoinsDatabase: RoomDatabase() {
 		return if (instance == null) {
 			synchronized(Any()) {
 				instance = Room.databaseBuilder(
-						context.applicationContext,
-						CoinsDatabase::class.java,
-						"coinsdb.db"
+					context.applicationContext,
+					CoinsDatabase::class.java,
+					"coinsdb.db"
 				)
-						.build()
+					.build()
 				instance!!
 			}
 		} else instance!!

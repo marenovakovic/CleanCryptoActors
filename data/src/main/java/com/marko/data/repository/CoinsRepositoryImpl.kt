@@ -6,15 +6,20 @@ import com.marko.domain.entity.CoinEntity
 import com.marko.domain.repository.CoinsRepository
 
 class CoinsRepositoryImpl(
-		private val dataSourceFactory: CoinsDataSourceFactory
-): CoinsRepository {
+	private val dataSourceFactory: CoinsDataSourceFactory
+) : CoinsRepository {
 
 	override suspend fun getAllCoins(): List<CoinEntity> {
 		val coins = dataSourceFactory.dataSource.getAllCoins()
+		dataSourceFactory.coinsCacheDataSource.saveCoins(coins)
 		return CoinsDataMapper.mapToEntity(coins)
 	}
 
 	override suspend fun getCoin(id: Int): CoinEntity {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override suspend fun clearCoins() {
+		dataSourceFactory.coinsCacheDataSource
 	}
 }

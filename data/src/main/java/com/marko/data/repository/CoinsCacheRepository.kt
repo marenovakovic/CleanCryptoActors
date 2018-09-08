@@ -2,7 +2,7 @@ package com.marko.data.repository
 
 import com.marko.data.entity.CoinData
 
-interface CoinsLocalRepository {
+interface CoinsCacheRepository {
 
 	suspend fun getAllCoins(): List<CoinData>
 
@@ -12,9 +12,11 @@ interface CoinsLocalRepository {
 
 	suspend fun saveCoin(coin: CoinData)
 
+	suspend fun clear()
+
 	var isCached: Boolean
 
 	var isExpired: Boolean
 
-	var cacheExpirationDate: Long
+	var lastCacheTime: Long
 }

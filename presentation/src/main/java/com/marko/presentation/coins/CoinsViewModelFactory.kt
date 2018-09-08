@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.marko.domain.usecase.GetCoins
 
 class CoinsViewModelFactory(
-		private val getCoins: GetCoins
-): ViewModelProvider.Factory {
+	private val getCoins: GetCoins
+) : ViewModelProvider.Factory {
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : ViewModel?> create(modelClass: Class<T>): T {

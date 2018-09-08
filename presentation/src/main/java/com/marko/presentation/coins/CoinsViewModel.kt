@@ -11,31 +11,37 @@ import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.launch
 
 class CoinsViewModel(
-		private val getCoins: GetCoins
-): BaseViewModel() {
+	private val getCoins: GetCoins
+) : BaseViewModel() {
 
 	private val _coins = MutableLiveData<List<Coin>>()
 	val coins: LiveData<List<Coin>>
 		get() = _coins
 
 	private val coinsActor = actor<CoinActorMessage>(IO, parent = job) {
-		for (event in channel) {
-			when (event) {
+		for (message in channel) {
+			when (message) {
 				is GetAllCoins -> {
 					val coins = CoinsPresentationMapper.mapFromEntity(getCoins(Unit))
 					_coins.postValue(coins)
 				}
+				is InvalidateCache -> Unit
 				is GetCoin -> Unit
 			}
 		}
 	}
 
 	fun fetch() {
-		launch(IO, parent = job) { coinsActor.send(GetAllCoins) }
+		launch(parent = job) { coinsActor.send(GetAllCoins) }
+	}
+
+	fun deleteCoins() {
+		launch(parent = job) { coinsActor.send(InvalidateCache) }
 	}
 }
 
 sealed class CoinActorMessage
 
-object GetAllCoins: CoinActorMessage()
-data class GetCoin(val id: Int): CoinActorMessage()
+object GetAllCoins : CoinActorMessage()
+object InvalidateCache : CoinActorMessage()
+data class GetCoin(val id: Int) : CoinActorMessage()

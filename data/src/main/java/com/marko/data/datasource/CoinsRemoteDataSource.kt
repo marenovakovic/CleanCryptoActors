@@ -4,16 +4,21 @@ import com.marko.data.entity.CoinData
 import com.marko.data.repository.CoinsRemoteRepository
 
 class CoinsRemoteDataSource(
-		private val remoteRepository: CoinsRemoteRepository
-): CoinsDataSource {
+	private val remoteRepository: CoinsRemoteRepository
+) : CoinsDataSource {
 
 	override suspend fun getAllCoins(): List<CoinData> = remoteRepository.getAllCoins()
 
 	override suspend fun getCoin(id: Int): CoinData = remoteRepository.getCoin(id)
 
-	override suspend fun saveCoins(coins: List<CoinData>) = throw IllegalAccessException("RemoteDataSource doesn't caches data")
+	override suspend fun saveCoins(coins: List<CoinData>) =
+		throw IllegalAccessException("RemoteDataSource doesn't caches data")
 
-	override suspend fun saveCoin(coin: CoinData) = throw IllegalAccessException("RemoteDataSource doesn't caches data")
+	override suspend fun saveCoin(coin: CoinData) =
+		throw IllegalAccessException("RemoteDataSource doesn't caches data")
+
+	override suspend fun clear() =
+		throw IllegalAccessException("RemoteDataSource doesn't caches data")
 
 	override var isCached: Boolean
 		get() = throw IllegalAccessException("RemoteDataSource doesn't caches data")

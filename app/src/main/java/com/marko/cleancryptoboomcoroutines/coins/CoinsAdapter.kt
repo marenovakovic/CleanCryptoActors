@@ -8,13 +8,13 @@ import com.marko.cleancryptoboomcoroutines.R
 import com.marko.cleancryptoboomcoroutines.extensions.inflate
 import com.marko.presentation.entity.Coin
 
-class CoinsAdapter: RecyclerView.Adapter<CoinsAdapter.CoinHolder>() {
+class CoinsAdapter : RecyclerView.Adapter<CoinsAdapter.CoinHolder>() {
 
 	var coins = listOf<Coin>()
-	set(value) {
-		field = value
-		notifyDataSetChanged()
-	}
+		set(value) {
+			field = value
+			notifyDataSetChanged()
+		}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinHolder {
 		val view = parent.inflate(R.layout.list_item_coin)
@@ -28,7 +28,7 @@ class CoinsAdapter: RecyclerView.Adapter<CoinsAdapter.CoinHolder>() {
 
 	override fun getItemCount(): Int = coins.size
 
-	inner class CoinHolder(view: View): RecyclerView.ViewHolder(view) {
+	inner class CoinHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 		private val coinName = view.findViewById<TextView>(R.id.coinName)
 

@@ -5,7 +5,7 @@ import com.marko.data.repository.CoinsRemoteRepository
 import com.marko.remote.api.CoinsApi
 import com.marko.remote.mapper.CoinsRemoteMapper
 
-class CoinsRemoteRepositoryImpl: CoinsRemoteRepository {
+class CoinsRemoteRepositoryImpl : CoinsRemoteRepository {
 
 	override suspend fun getAllCoins(): List<CoinData> {
 		val coins = CoinsApi.coinsService.getAllCoins().await().coins

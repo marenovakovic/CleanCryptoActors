@@ -12,6 +12,8 @@ interface CoinsDataSource {
 
 	suspend fun saveCoin(coin: CoinData)
 
+	suspend fun clear()
+
 	var isCached: Boolean
 
 	var isExpired: Boolean

@@ -3,13 +3,13 @@ package com.marko.remote.mapper
 import com.marko.data.entity.CoinData
 import com.marko.remote.entity.CoinRemote
 
-object CoinsRemoteMapper: RemoteMapper<CoinData, CoinRemote> {
+object CoinsRemoteMapper : RemoteMapper<CoinData, CoinRemote> {
 
 	override fun mapFromData(data: CoinData): CoinRemote {
 		return CoinRemote(
-				id = data.id,
-				name = data.name,
-				symbol = data.symbol
+			id = data.id,
+			name = data.name,
+			symbol = data.symbol
 		)
 	}
 
@@ -19,9 +19,9 @@ object CoinsRemoteMapper: RemoteMapper<CoinData, CoinRemote> {
 
 	override fun mapToData(remote: CoinRemote): CoinData {
 		return CoinData(
-				id = remote.id,
-				name = remote.name,
-				symbol = remote.symbol
+			id = remote.id,
+			name = remote.name,
+			symbol = remote.symbol
 		)
 	}
 

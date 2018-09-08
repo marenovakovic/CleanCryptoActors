@@ -1,11 +1,11 @@
 package com.marko.data.datasource
 
 class CoinsDataSourceFactory(
-		private val coinsRemoteDataSource: CoinsRemoteDataSource,
-		private val coinsLocalDataSource: CoinsLocalDataSource
+	val coinsCacheDataSource: CoinsCacheDataSource,
+	private val coinsRemoteDataSource: CoinsRemoteDataSource
 ) {
 	val dataSource: CoinsDataSource
-		get() = coinsRemoteDataSource
-//			if (coinsLocalDataSource.isCached && coinsLocalDataSource.isExpired) coinsLocalDataSource
-//			else coinsRemoteDataSource
+		get() =
+			if (coinsCacheDataSource.isCached && coinsCacheDataSource.isExpired) coinsCacheDataSource
+			else coinsRemoteDataSource
 }

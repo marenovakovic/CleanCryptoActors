@@ -16,11 +16,11 @@ interface CoinsDao {
 	fun getCoin(id: Long): CoinCache
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	fun insertCoins(coins: List<CoinCache>)
+	fun saveCoins(coins: List<CoinCache>)
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	fun insertCoin(coin: CoinCache)
+	fun saveCoin(coin: CoinCache)
 
 	@Query("DELETE FROM coins")
-	fun deleteCoins()
+	fun clear()
 }

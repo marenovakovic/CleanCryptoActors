@@ -7,4 +7,6 @@ interface CoinsRepository {
 	suspend fun getAllCoins(): List<CoinEntity>
 
 	suspend fun getCoin(id: Int): CoinEntity
+
+	suspend fun clearCoins()
 }

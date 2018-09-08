@@ -3,13 +3,13 @@ package com.marko.data.mapper
 import com.marko.data.entity.CoinData
 import com.marko.domain.entity.CoinEntity
 
-object CoinsDataMapper: DataMapper<CoinEntity, CoinData> {
+object CoinsDataMapper : DataMapper<CoinEntity, CoinData> {
 
 	override fun mapFromEntity(entity: CoinEntity): CoinData {
 		return CoinData(
-				id = entity.id,
-				name = entity.name,
-				symbol = entity.symbol
+			id = entity.id,
+			name = entity.name,
+			symbol = entity.symbol
 		)
 	}
 
@@ -19,9 +19,9 @@ object CoinsDataMapper: DataMapper<CoinEntity, CoinData> {
 
 	override fun mapToEntity(data: CoinData): CoinEntity {
 		return CoinEntity(
-				id = data.id,
-				name = data.name,
-				symbol = data.symbol
+			id = data.id,
+			name = data.name,
+			symbol = data.symbol
 		)
 	}
 

@@ -3,21 +3,29 @@ package com.marko.cache.mapper
 import com.marko.cache.entity.CoinCache
 import com.marko.data.entity.CoinData
 
-object CoinsCacheMapper: CacheMapper<CoinData, CoinCache> {
+object CoinsCacheMapper : CacheMapper<CoinData, CoinCache> {
 
 	override fun mapFromData(data: CoinData): CoinCache {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		return CoinCache(
+			id = data.id,
+			name = data.name,
+			symbol = data.symbol
+		)
 	}
 
 	override fun mapFromData(datas: List<CoinData>): List<CoinCache> {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		return datas.map { mapFromData(it) }
 	}
 
 	override fun mapToData(cache: CoinCache): CoinData {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		return CoinData(
+			id = cache.id,
+			name = cache.name,
+			symbol = cache.symbol
+		)
 	}
 
 	override fun mapToData(caches: List<CoinCache>): List<CoinData> {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		return caches.map { mapToData(it) }
 	}
 }
