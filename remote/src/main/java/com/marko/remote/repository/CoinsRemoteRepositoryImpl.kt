@@ -13,7 +13,7 @@ class CoinsRemoteRepositoryImpl : CoinsRemoteRepository {
 	}
 
 	override suspend fun getCoin(id: Int): CoinData {
-		val coin = CoinsApi.coinsService.getCoin(id).await()
+		val coin = CoinsApi.coinsService.getCoin(id).await().coin
 		return CoinsRemoteMapper.mapToData(coin)
 	}
 }

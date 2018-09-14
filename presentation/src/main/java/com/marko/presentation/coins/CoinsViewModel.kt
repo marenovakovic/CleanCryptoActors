@@ -6,7 +6,7 @@ import com.marko.domain.usecase.GetCoins
 import com.marko.presentation.base.BaseViewModel
 import com.marko.presentation.entity.Coin
 import com.marko.presentation.mapper.CoinsPresentationMapper
-import kotlinx.coroutines.experimental.IO
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.launch
 
@@ -18,25 +18,38 @@ class CoinsViewModel(
 	val coins: LiveData<List<Coin>>
 		get() = _coins
 
-	private val coinsActor = actor<CoinActorMessage>(IO, parent = job) {
+	private val coinsActor = scope.actor<CoinActorMessage> {
 		for (message in channel) {
 			when (message) {
 				is GetAllCoins -> {
-					val coins = CoinsPresentationMapper.mapFromEntity(getCoins(Unit))
-					_coins.postValue(coins)
+					println("Started on ${Thread.currentThread().name}")
+
+					val coins = asyncScope.async {
+						println("Getting coins on ${Thread.currentThread().name}")
+
+						CoinsPresentationMapper.mapFromEntity(getCoins(Unit))
+					}
+
+					_coins.value = coins.await()
+
+					println("Back on ${Thread.currentThread().name}")
 				}
-				is InvalidateCache -> Unit
 				is GetCoin -> Unit
+				is InvalidateCache -> Unit
 			}
 		}
 	}
 
 	fun fetch() {
-		launch(parent = job) { coinsActor.send(GetAllCoins) }
+		scope.launch { coinsActor.send(GetAllCoins) }
 	}
 
-	fun deleteCoins() {
-		launch(parent = job) { coinsActor.send(InvalidateCache) }
+	fun fetch(id: Int) {
+		scope.launch { coinsActor.send(GetCoin(id)) }
+	}
+
+	private fun deleteCoins() {
+		scope.launch { coinsActor.send(InvalidateCache) }
 	}
 }
 
