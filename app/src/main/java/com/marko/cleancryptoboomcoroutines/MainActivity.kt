@@ -8,6 +8,7 @@ import com.marko.cleancryptoboomcoroutines.base.BaseActivity
 import com.marko.cleancryptoboomcoroutines.coins.CoinsAdapter
 import com.marko.presentation.coins.CoinsViewModel
 import com.marko.presentation.coins.CoinsViewModelFactory
+import com.marko.presentation.entity.Coin
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -27,11 +28,20 @@ class MainActivity : BaseActivity() {
 		setContentView(R.layout.activity_main)
 
 		viewModel.fetch()
-		viewModel.coins.observe(this, Observer { coins ->
-			coins?.let { recyclerAdapter.coins = it }
+		viewModel.coins.observe(this, Observer { result ->
+			result?.let(::handleCoins)
+		})
+		viewModel.showLoading.observe(this, Observer {
+			println("evo ga")
+			coinsProgressBar.show()
 		})
 
 		coinsRecyclerView.adapter = recyclerAdapter
 		coinsRecyclerView.layoutManager = LinearLayoutManager(this)
+	}
+
+	private fun handleCoins(coins: List<Coin>) {
+		coinsProgressBar.hide()
+		recyclerAdapter.coins = coins
 	}
 }

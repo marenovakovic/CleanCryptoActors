@@ -11,7 +11,7 @@ abstract class BaseViewModel : ViewModel() {
 
 	private val job = Job()
 
-	protected val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
+	protected val uiScope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
 
 	protected val asyncScope = CoroutineScope(Dispatchers.IO + job)
 

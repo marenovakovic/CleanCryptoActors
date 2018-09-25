@@ -2,12 +2,15 @@ package com.marko.presentation.coins
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.marko.domain.Result
+import com.marko.domain.entity.CoinEntity
 import com.marko.domain.usecase.GetCoins
 import com.marko.presentation.base.BaseViewModel
 import com.marko.presentation.entity.Coin
 import com.marko.presentation.mapper.CoinsPresentationMapper
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 
 class CoinsViewModel(
@@ -18,22 +21,28 @@ class CoinsViewModel(
 	val coins: LiveData<List<Coin>>
 		get() = _coins
 
-	private val coinsActor = scope.actor<CoinActorMessage> {
+	private val _showLoading = MutableLiveData<Unit>()
+	val showLoading: LiveData<Unit>
+		get() = _showLoading
+
+	private val coinsChannel = Channel<Result<List<CoinEntity>>>()
+
+	init {
+		uiScope.launch {
+			for (result in coinsChannel) {
+				when (result) {
+					is Result.Success -> _coins.value =
+							CoinsPresentationMapper.mapFromEntity(result.data)
+					is Result.Loading -> _showLoading.value = Unit
+				}
+			}
+		}
+	}
+
+	private val coinsActor = uiScope.actor<CoinActorMessage> {
 		for (message in channel) {
 			when (message) {
-				is GetAllCoins -> {
-					println("Started on ${Thread.currentThread().name}")
-
-					val coins = asyncScope.async {
-						println("Getting coins on ${Thread.currentThread().name}")
-
-						CoinsPresentationMapper.mapFromEntity(getCoins(Unit))
-					}
-
-					_coins.value = coins.await()
-
-					println("Back on ${Thread.currentThread().name}")
-				}
+				is GetAllCoins -> asyncScope.launch { getCoins(Unit, coinsChannel) }
 				is GetCoin -> Unit
 				is InvalidateCache -> Unit
 			}
@@ -41,15 +50,15 @@ class CoinsViewModel(
 	}
 
 	fun fetch() {
-		scope.launch { coinsActor.send(GetAllCoins) }
+		uiScope.launch { coinsActor.send(GetAllCoins) }
 	}
 
 	fun fetch(id: Int) {
-		scope.launch { coinsActor.send(GetCoin(id)) }
+		uiScope.launch { coinsActor.send(GetCoin(id)) }
 	}
 
 	private fun deleteCoins() {
-		scope.launch { coinsActor.send(InvalidateCache) }
+		uiScope.launch { coinsActor.send(InvalidateCache) }
 	}
 }
 
