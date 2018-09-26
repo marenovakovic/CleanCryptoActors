@@ -32,7 +32,6 @@ class MainActivity : BaseActivity() {
 			result?.let(::handleCoins)
 		})
 		viewModel.showLoading.observe(this, Observer {
-			println("evo ga")
 			coinsProgressBar.show()
 		})
 

@@ -8,9 +8,8 @@ import com.marko.domain.usecase.GetCoins
 import com.marko.presentation.base.BaseViewModel
 import com.marko.presentation.entity.Coin
 import com.marko.presentation.mapper.CoinsPresentationMapper
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.actor
-import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 
 class CoinsViewModel(
@@ -25,40 +24,37 @@ class CoinsViewModel(
 	val showLoading: LiveData<Unit>
 		get() = _showLoading
 
-	private val coinsChannel = Channel<Result<List<CoinEntity>>>()
 
-	init {
-		uiScope.launch {
-			for (result in coinsChannel) {
-				when (result) {
-					is Result.Success -> _coins.value =
-							CoinsPresentationMapper.mapFromEntity(result.data)
-					is Result.Loading -> _showLoading.value = Unit
-				}
-			}
-		}
-	}
-
-	private val coinsActor = uiScope.actor<CoinActorMessage> {
+	private val coinsActor = scope.actor<CoinActorMessage> {
 		for (message in channel) {
 			when (message) {
-				is GetAllCoins -> asyncScope.launch { getCoins(Unit, coinsChannel) }
+				is GetAllCoins -> scope.launch {
+					getCoins(Unit) { dispatchCoinsResult(it) }
+				}
 				is GetCoin -> Unit
 				is InvalidateCache -> Unit
 			}
 		}
 	}
 
-	fun fetch() {
-		uiScope.launch { coinsActor.send(GetAllCoins) }
-	}
+	fun fetch() = scope.launch { coinsActor.send(GetAllCoins) }
 
-	fun fetch(id: Int) {
-		uiScope.launch { coinsActor.send(GetCoin(id)) }
-	}
-
-	private fun deleteCoins() {
-		uiScope.launch { coinsActor.send(InvalidateCache) }
+	private suspend fun dispatchCoinsResult(channel: ReceiveChannel<Result<List<CoinEntity>>>) {
+		scope.launch {
+			for (result in channel) {
+				when (result) {
+					is Result.Loading -> {
+						_showLoading.postValue(Unit)
+					}
+					is Result.Success -> _coins.postValue(
+						CoinsPresentationMapper.mapFromEntity(
+							result.data
+						)
+					)
+					is Result.Error -> result.throwable.printStackTrace()
+				}
+			}
+		}
 	}
 }
 

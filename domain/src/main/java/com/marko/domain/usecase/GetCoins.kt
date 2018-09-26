@@ -7,7 +7,5 @@ class GetCoins(
 	private val coinsRepository: CoinsRepository
 ) : UseCase<Unit, List<CoinEntity>>() {
 
-	override suspend fun execute(parameters: Unit): List<CoinEntity> {
-		return coinsRepository.getAllCoins()
-	}
+	override suspend fun execute(parameters: Unit): List<CoinEntity> = coinsRepository.getAllCoins()
 }

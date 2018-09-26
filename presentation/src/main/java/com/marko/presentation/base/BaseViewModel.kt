@@ -11,9 +11,7 @@ abstract class BaseViewModel : ViewModel() {
 
 	private val job = Job()
 
-	protected val uiScope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
-
-	protected val asyncScope = CoroutineScope(Dispatchers.IO + job)
+	protected val scope = CoroutineScope(Dispatchers.IO + job)
 
 	override fun onCleared() {
 		super.onCleared()
